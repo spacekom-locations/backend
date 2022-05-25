@@ -24,7 +24,7 @@ echo "Deploying SpaceKom API ..."
 
     php artisan migrate --force
     
-    php artisan db:seed
+    chmod -R 777 .
 
 
     # Note: If you're using queue workers, this is the place to restart them.
