@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'SpaceKomAPI'),
 
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +69,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    //Gulf Standard Time (GST) is 4 hours ahead of Coordinated Universal Time (UTC). This time zone is in use during standard time in: Asia.
+    'timezone' => 'asia/dubai', 
 
     /*
     |--------------------------------------------------------------------------
@@ -181,7 +182,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        Jenssegers\Agent\AgentServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -210,6 +211,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
     ])->toArray(),
 
 ];
