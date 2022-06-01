@@ -234,7 +234,6 @@ class SupervisorService
                 return $this->revokeCurrentAccessToken($supervisor);
                 break;
         }
-        dd($supervisor->currentAccessToken()->id);
     }
 
     /**

@@ -8,6 +8,10 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
 
+if(app()->environment(['local'])){
+    usleep(900 * 1000);
+}
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -24,11 +28,13 @@ class Controller extends BaseController
         $envelope = [
             'hasError' => false,
             'messages' => $messages,
-            'data' => $data,
         ];
 
-        return response($envelope, $HTTPCode, $headers);
+        if ($data) {
+            $envelope['data'] = $data;
+        }
 
+        return response($envelope, $HTTPCode, $headers);
     }
 
 
@@ -38,8 +44,8 @@ class Controller extends BaseController
      * @param int $httpCode http response code
      * @param array $HTTPCode array of http header to be in the response
      */
-    
-    public function sendError( $messages, $HTTPCode = 500, $headers = [])
+
+    public function sendError($messages, $HTTPCode = 500, $headers = [])
     {
         $envelope = [
             'hasError' => true,
