@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Locations\DeleteLocationImageRequest;
+use App\Http\Requests\Locations\StoreLocationImageRequest;
 use App\Http\Requests\Users\LoginRequest;
 use App\Http\Requests\Users\SingUpRequest;
 use App\Http\Requests\Users\UpdateUser;
+use App\Models\Location;
 use App\Models\User;
+use App\Services\Locations\LocationService;
 use App\Services\Users\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -116,7 +120,7 @@ class UsersController extends Controller
         if ($request->has('notes')) $userData['notes'] = $request->input('notes');
 
         if ($request->hasFile('avatar')) {
-            $name = uniqid() . $request->avatar->extension();
+            $name = uniqid() . '.' . $request->avatar->extension();
             $request->avatar->storeAs('public/images/users/avatar', $name);
             $imageURL = url("storage/images/users/avatar/" . $name);
             $userData['avatar'] = $imageURL;
@@ -162,5 +166,45 @@ class UsersController extends Controller
             ];
         }
         return $this->sendData(['tokens' => $tokensData]);
+    }
+
+    public function indexLocations()
+    {
+        $locations = LocationService::indexWithFilters([
+            'user_id' => auth('users')->user()->id
+        ]);
+        return $this->sendData($locations);
+    }
+
+    public function showLocation(string $id)
+    {
+        $location = Location::where('id', $id)->where('user_id', auth('users')->user()->id)->first();
+        if (!$location) {
+            return $this->sendError(['location not found']);
+        }
+
+        return $this->sendData($location);
+    }
+
+    public function addLocationImages(StoreLocationImageRequest $request, string $id)
+    {
+        $location = Location::where('id', $id)->where('user_id', auth('users')->user()->id)->first();
+        if (!$location) {
+            return $this->sendError(['location not found']);
+        }
+
+        $images = $request->file('image');
+        $location = LocationService::uploadImages($location, $images);
+        return $this->sendData($location);
+    }
+
+    public function removeLocationImage(DeleteLocationImageRequest $request, string $id)
+    {
+        $location = Location::where('id', $id)->where('user_id', auth('users')->user()->id)->first();
+        if (!$location) {
+            return $this->sendError(['location not found']);
+        }
+        $location = LocationService::removeImage($location, $request->image);
+        return $this->sendData($location);
     }
 }
