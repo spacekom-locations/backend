@@ -12,36 +12,38 @@ Route::prefix('authenticate')->group(function () {
 
 Route::middleware('auth:sanctum', 'auth:users')->group(function () {
     Route::get('logout', [UsersController::class, 'logout'])->name('users.logout');
-    Route::prefix('users')->group(function () {
+    Route::prefix('users/0')->group(function () {
         //The current connected user data
-        Route::prefix('0')->group(function () {
-            //update current user data
-            Route::put('', [UsersController::class, 'update'])->name('users.update');
 
-            //get current user personal access tokens
-            Route::get('personal-access-tokens', [UsersController::class, 'getAllPersonalAccessToken'])
-                ->name('users.personal_access_tokens.index');
+        //update current user data
+        Route::put('', [UsersController::class, 'update'])->name('users.update');
 
-            //add new location to the current user listing
-            Route::post('locations', [LocationsController::class, 'store'])->name('locations.store');
+        //get current user personal access tokens
+        Route::get('personal-access-tokens', [UsersController::class, 'getAllPersonalAccessToken'])
+            ->name('users.personal_access_tokens.index');
 
-            //index user locations
-            Route::get('locations', [UsersController::class, 'indexLocations'])->name('users.locations.index');
+        //add new location to the current user listing
+        Route::post('locations', [LocationsController::class, 'store'])->name('locations.store');
 
-            //show location
-            Route::get('locations/{id}', [UsersController::class, 'showLocation'])->name('users.locations.show');
+        //index user locations
+        Route::get('locations', [UsersController::class, 'indexLocations'])->name('users.locations.index');
 
-            //update location
-            Route::put('locations/{id}', [LocationsController::class, 'update'])->name('locations.update');
+        //show location
+        Route::get('locations/{id}', [UsersController::class, 'showLocation'])->name('users.locations.show');
 
-            //add location images
-            Route::post('locations/{id}/images', [UsersController::class, 'addLocationImages'])->name('users.locations.images.add');
+        //update location
+        Route::put('locations/{id}', [LocationsController::class, 'update'])->name('locations.update');
 
-            //delete location image
-            Route::delete('locations/{id}/images', [UsersController::class, 'removeLocationImage'])->name('users.locations.images.delete');
-        });
+        //add location images
+        Route::post('locations/{id}/images', [UsersController::class, 'addLocationImages'])->name('users.locations.images.add');
 
-        //users data
-        Route::get('{id}', [UsersController::class, 'show'])->name('users.show');
+        //delete location image
+        Route::delete('locations/{id}/images', [UsersController::class, 'removeLocationImage'])->name('users.locations.images.delete');
     });
 });
+//users data
+Route::get('users/{id}', [UsersController::class, 'show'])->name('users.show');
+
+//index user locations
+Route::get('users/{id}/locations', [LocationsController::class, 'indexUserLocations'])->name('users.locations.index');
+

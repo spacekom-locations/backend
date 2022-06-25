@@ -92,4 +92,10 @@ class LocationService
     {
         return Location::filter($filters)->get();
     }
+
+    public static function indexWithActivityAndFilters($activity, $filters)
+    {
+        $locations = Location::filter($filters);
+        return $locations->where('allowed_activities', 'LIKE', "%$activity%")->get();
+    }
 }

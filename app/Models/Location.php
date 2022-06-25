@@ -111,6 +111,11 @@ class Location extends Model
         'minimum_rental_hours' => 'integer'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public const KIND_RESIDENTIAL = 'RESIDENTIAL';
     public const KIND_COMMERCIAL = 'COMMERCIAL';
     public const KIND_STUDIO = 'STUDIO';

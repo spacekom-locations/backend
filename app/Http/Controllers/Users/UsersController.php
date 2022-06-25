@@ -178,7 +178,7 @@ class UsersController extends Controller
 
     public function showLocation(string $id)
     {
-        $location = Location::where('id', $id)->where('user_id', auth('users')->user()->id)->first();
+        $location = Location::with('user')->where('id', $id)->where('user_id', auth('users')->user()->id)->first();
         if (!$location) {
             return $this->sendError(['location not found']);
         }
@@ -190,7 +190,7 @@ class UsersController extends Controller
     {
         $location = Location::where('id', $id)->where('user_id', auth('users')->user()->id)->first();
         if (!$location) {
-            return $this->sendError(['location not found']);
+            return $this->sendError(['location not found'], Response::HTTP_NOT_FOUND);
         }
 
         $images = $request->file('image');
