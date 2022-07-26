@@ -1,11 +1,10 @@
 <?php
 
-use Cmgmyr\Messenger\Models\Models;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMessagesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +13,8 @@ class CreateMessagesTable extends Migration
      */
     public function up()
     {
-        Schema::create(Models::table('messages'), function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('thread_id');
-            $table->uuid('user_id');
-            $table->text('body');
+        Schema::create('bookings', function (Blueprint $table) {
+            $table->id();
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ class CreateMessagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(Models::table('messages'));
+        Schema::dropIfExists('bookings');
     }
-}
+};
