@@ -24,7 +24,7 @@ class ThreadsController extends Controller
     public function index()
     {
         $user = auth('users')->user();
-        $threads = Thread::forUser($user->id)->with(['participants.user', 'location'])->get();
+        $threads = Thread::forUser($user->id)->with(['participants.user', 'location.user'])->get();
         return $this->sendData($threads);
     }
 

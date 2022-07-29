@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum', 'auth:users')->group(function () {
         Route::post('locations', [LocationsController::class, 'store'])->name('locations.store');
 
         //index user locations
-        Route::get('locations', [UsersController::class, 'indexLocations'])->name('users.locations.index');
+        Route::get('locations', [UsersController::class, 'indexLocations'])->name('users.current.locations.index');
 
         //show location
         Route::get('locations/{id}', [UsersController::class, 'showLocation'])->name('users.locations.show');
