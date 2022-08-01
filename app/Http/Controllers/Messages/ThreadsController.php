@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Messages;
 
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Messages\SendMessageRequest;
 use App\Http\Requests\Messages\ShowThreadRequest;
@@ -53,7 +54,6 @@ class ThreadsController extends Controller
             return $query->where('user_id', '=', $sender->id);
         })->first();
         if ($thread) {
-            
             if ($thread->creator()->id == $sender->id) {
                 return $this->sendError('this thread is already created', Response::HTTP_NOT_ACCEPTABLE);
             }
@@ -109,7 +109,22 @@ class ThreadsController extends Controller
         ]);
 
         $participant = $thread->getParticipantFromUser($user->id);
-        $participant->update(['last_read' => Carbon::now(),]);
+        $participant->setLastRead(Carbon::now());
+
+        $receiver = $thread->participants->where('user_id', '!=', $user->id)->first();
+
+        $messageData = [
+            'id' => $message->id,
+            'user_id' => $user->id,
+            'form' => $user->id,
+            'to' => $receiver->user->id,
+            'thread_id' => $thread->id,
+            'body' =>  $message->body,
+            'created_at' =>  $message->created_at,
+            'updated_at' =>  $message->updated_at,
+        ];
+
+        event(new MessageSent($messageData));
 
         return $this->sendData($message);
     }

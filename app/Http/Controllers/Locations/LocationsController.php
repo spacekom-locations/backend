@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Locations\StoreLocationRequest;
 use App\Http\Requests\Locations\UpdateLocationRequest;
 use App\Models\Location;
+use App\Models\LocationBookings;
 use App\Services\Locations\LocationService;
+use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -63,6 +65,29 @@ class LocationsController extends Controller
         $location = Location::with('user')->where('id', $id)->first();
         if (!$location) {
             return $this->sendError(['location not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        
+        $location['has_active_booking'] = false;
+        $location['has_active_messages_thread'] = false;
+        
+        $user = auth('users')->user();
+        if ($user) {
+            $thread = Thread::where('location_id', $location->id)->whereHas('participants', function ($query) use ($user) {
+                return $query->where('user_id', '=', $user->id);
+            })->first();
+
+            if ($thread) {
+                $location['has_active_messages_thread'] = true;
+                $location['thread'] = $thread;
+            }
+
+            $booking = LocationBookings::where('user_id', $user->id)
+                ->where('location_id', $location->id)
+                ->whereIn('status', [LocationBookings::STATUS_PENDING, LocationBookings::STATUS_APPROVED])->first();
+            if ($booking) {
+                $location['has_active_booking'] = true;
+            }
         }
 
         return $this->sendData($location);

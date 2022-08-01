@@ -14,18 +14,17 @@ class LocationFilter extends ModelFilter
      */
     public $relations = [];
 
-    public function user($id)
-    {
-        return $this->where('user_id', $id);
-    }
-
     public static function splitStringByCommaAndSpace(string $s)
     {
-
         $pattern = '/[\s+,]/';
         return preg_split($pattern, $s, -1, PREG_SPLIT_NO_EMPTY);
     }
 
+
+    public function user($id)
+    {
+        return $this->where('user_id', $id);
+    }
     public function activity($activity)
     {
         return $this->where('allowed_activities', 'LIKE', "%$activity%");
