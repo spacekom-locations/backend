@@ -26,6 +26,8 @@ class ThreadsController extends Controller
     {
         $user = auth('users')->user();
         $threads = Thread::forUser($user->id)->with(['participants.user', 'location.user'])->get();
+        $participant = $threads[0]->getParticipantFromUser($user->id);
+        $participant->setLastRead(Carbon::now());
         return $this->sendData($threads);
     }
 
@@ -39,6 +41,8 @@ class ThreadsController extends Controller
         if (!in_array($user->id, $thread->participantsUserIds($user->id))) {
             return $this->sendError('Access Denied', Response::HTTP_UNAUTHORIZED);
         }
+        $participant = $thread->getParticipantFromUser($user->id);
+        $participant->setLastRead(Carbon::now());
         return $this->sendData($thread);
     }
 
