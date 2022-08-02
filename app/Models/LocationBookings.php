@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\TraitUuid;
+use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,6 +19,10 @@ class LocationBookings extends Model
         return $this->belongsTo(Location::class, 'location_id', 'id');
     }
 
+    public function threads()
+    {
+        return $this->hasMany(Thread::class, 'location_id', 'id');
+    }
     public function user()
     {
         return $this->belongsTo(user::class, 'user_id', 'id');

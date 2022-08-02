@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Messages\SendMessageRequest;
 use App\Http\Requests\Messages\ShowThreadRequest;
 use App\Http\Requests\Messages\StoreThreadRequest;
+use App\Http\Requests\Messages\ComposeFromBookingRequest;
 use App\Models\Location;
+use App\Models\LocationBookings;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Message;
 use Cmgmyr\Messenger\Models\Participant;
@@ -26,8 +28,10 @@ class ThreadsController extends Controller
     {
         $user = auth('users')->user();
         $threads = Thread::forUser($user->id)->with(['participants.user', 'location.user'])->get();
-        $participant = $threads[0]->getParticipantFromUser($user->id);
-        $participant->setLastRead(Carbon::now());
+        if (count($threads) and $threads[0]) {
+            $participant = $threads[0]->getParticipantFromUser($user->id);
+            $participant->setLastRead(Carbon::now());
+        }
         return $this->sendData($threads);
     }
 
@@ -58,9 +62,7 @@ class ThreadsController extends Controller
             return $query->where('user_id', '=', $sender->id);
         })->first();
         if ($thread) {
-            if ($thread->creator()->id == $sender->id) {
-                return $this->sendError('this thread is already created', Response::HTTP_NOT_ACCEPTABLE);
-            }
+            return $this->sendError('this thread is already created', Response::HTTP_NOT_ACCEPTABLE);
         }
 
 
@@ -93,6 +95,8 @@ class ThreadsController extends Controller
         // Recipients . ** the owner of the location **
         $locationOwner = $location->user;
         $thread->addParticipant($locationOwner->id);
+
+        return $this->sendData($thread);
     }
 
     public function sendMessage(SendMessageRequest $request, string $id)
@@ -131,5 +135,54 @@ class ThreadsController extends Controller
         event(new MessageSent($messageData));
 
         return $this->sendData($message);
+    }
+
+    public function composeFromBooking(ComposeFromBookingRequest $request)
+    {
+        $booking = LocationBookings::with(['location', 'user'])->where('id', $request->input('booking_id'))->first();
+        if (!$booking) return $this->sendError('booking not found', Response::HTTP_NOT_FOUND);
+
+        $location = $booking->location;
+
+        if (!$location) return $this->sendError('location not found', Response::HTTP_NOT_FOUND);
+
+        $sender = auth('users')->user();
+        //if the user already send message for this location do not create new thread
+        $thread = Thread::where('location_id', $location->id)->whereHas('participants', function ($query) use ($sender) {
+            return $query->where('user_id', '=', $sender->id);
+        })->first();
+        if ($thread) {
+            return $this->sendError('this thread is already created', Response::HTTP_NOT_ACCEPTABLE);
+        }
+
+        $thread = Thread::create([
+            'location_id' => $location->id,
+        ]);
+
+        $message = $request->input('message');
+
+        // Message
+        Message::create([
+            'thread_id' => $thread->id,
+            'user_id' => $sender->id,
+            'body' => $message,
+        ]);
+
+        // Sender
+        Participant::create([
+            'thread_id' => $thread->id,
+            'user_id' => $sender->id,
+            'last_read' => Carbon::now(),
+        ]);
+
+        // Recipients . ** the booking request maker **
+        if ($sender->id == $booking->user_id) {
+            $locationOwner = $location->user;
+            $thread->addParticipant($locationOwner->id);
+        } else {
+            $thread->addParticipant($booking->user->id);
+        }
+
+        return $this->sendData($thread);
     }
 }
