@@ -3,7 +3,6 @@
 /public/storage
 /storage/*.key
 /vendor
-!/vendor/cmgmyr
 .env
 .env.backup
 .phpunit.result.cache

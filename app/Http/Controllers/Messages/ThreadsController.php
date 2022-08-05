@@ -10,10 +10,11 @@ use App\Http\Requests\Messages\StoreThreadRequest;
 use App\Http\Requests\Messages\ComposeFromBookingRequest;
 use App\Models\Location;
 use App\Models\LocationBookings;
+use App\Models\Messenger\Message;
+use App\Models\Messenger\Participant;
+use App\Models\Messenger\Thread;
 use Carbon\Carbon;
-use Cmgmyr\Messenger\Models\Message;
-use Cmgmyr\Messenger\Models\Participant;
-use Cmgmyr\Messenger\Models\Thread;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

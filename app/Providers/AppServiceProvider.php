@@ -28,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
         //
 
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
-
+        \Cmgmyr\Messenger\Models\Models::setUserModel(\App\Models\User::class);
+        \Cmgmyr\Messenger\Models\Models::setThreadModel(\App\Models\Messenger\Thread::class);
+        \Cmgmyr\Messenger\Models\Models::setMessageModel(\App\Models\Messenger\Message::class);
+        \Cmgmyr\Messenger\Models\Models::setParticipantModel(\App\Models\Messenger\Participant::class);
     }
 }

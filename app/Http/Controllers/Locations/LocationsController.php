@@ -7,8 +7,8 @@ use App\Http\Requests\Locations\StoreLocationRequest;
 use App\Http\Requests\Locations\UpdateLocationRequest;
 use App\Models\Location;
 use App\Models\LocationBookings;
+use App\Models\Messenger\Thread;
 use App\Services\Locations\LocationService;
-use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

@@ -9,7 +9,7 @@ use App\Http\Requests\Bookings\IndexBookingsRequest;
 use App\Http\Requests\Bookings\StoreBookingRequest;
 use App\Models\Location;
 use App\Models\LocationBookings;
-use Cmgmyr\Messenger\Models\Thread;
+use App\Models\Messenger\Thread;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

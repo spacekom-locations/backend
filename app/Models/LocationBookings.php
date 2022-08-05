@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Messenger\Thread;
 use App\Traits\TraitUuid;
-use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
