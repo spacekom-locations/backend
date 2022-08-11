@@ -68,6 +68,7 @@ class LocationBookings extends Model
         return [
             static::STATUS_PENDING,
             static::STATUS_APPROVED,
+            static::STATUS_DECLINED,
             static::STATUS_COMPLETED,
             static::STATUS_CANCELED,
             static::STATUS_PAID,

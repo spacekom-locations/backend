@@ -120,4 +120,48 @@ class BookingsController extends Controller
         $booking->save();
         return $this->sendData('booking declined');
     }
+
+    public function complete(Request $request, string $id)
+    {
+        $booking = LocationBookings::with('location', 'user')
+            ->where('id', $id)
+            ->where('status', LocationBookings::STATUS_APPROVED)
+            ->first();
+
+        if (!$booking) {
+            return $this->sendError('booking not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $user = auth('users')->user();
+
+        if ($user->id != $booking->location->user_id) {
+            return $this->sendError('forbidden', Response::HTTP_FORBIDDEN);
+        }
+
+        $booking->status = LocationBookings::STATUS_COMPLETED;
+        $booking->save();
+        return $this->sendData('booking declined');
+    }
+
+    public function cancel(Request $request, string $id)
+    {
+        $booking = LocationBookings::with('location', 'user')
+            ->where('id', $id)
+            ->where('status', LocationBookings::STATUS_PENDING)
+            ->first();
+
+        if (!$booking) {
+            return $this->sendError('booking not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $user = auth('users')->user();
+
+        if ($user->id != $booking->user_id) {
+            return $this->sendError('forbidden', Response::HTTP_FORBIDDEN);
+        }
+
+        $booking->status = LocationBookings::STATUS_CANCELED;
+        $booking->save();
+        return $this->sendData('booking declined');
+    }
 }

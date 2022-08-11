@@ -8,4 +8,6 @@ Route::prefix('bookings')->middleware('auth:sanctum', 'auth:users')->group(funct
     Route::post('/', [BookingsController::class, 'store'])->name('bookings.store');
     Route::post('/{id}/approve', [BookingsController::class, 'approve'])->name('bookings.approve');
     Route::post('/{id}/decline', [BookingsController::class, 'decline'])->name('bookings.decline');
+    Route::post('/{id}/complete', [BookingsController::class, 'complete'])->name('bookings.complete');
+    Route::post('/{id}/cancel', [BookingsController::class, 'cancel'])->name('bookings.cancel');
 });
