@@ -116,7 +116,7 @@ class BookingsController extends Controller
             return $this->sendError('forbidden', Response::HTTP_FORBIDDEN);
         }
 
-        $booking->status = LocationBookings::STATUS_APPROVED;
+        $booking->status = LocationBookings::STATUS_DECLINED;
         $booking->save();
         return $this->sendData('booking declined');
     }
